@@ -2,34 +2,37 @@ import React, { useState, useRef } from "react";
 import { Camera } from "react-camera-pro";
 import "tailwindcss/tailwind.css";
 
-const SelfieUI = ({ setSelfie }) => {
-  const [image, setImage] = useState(null);
+const SelfieUI = ({ setSelfie, setConcepts, setImage }) => {
+  const [image, setLocalImage] = useState(null);
   const [confirm, setConfirm] = useState(false);
   const cameraRef = useRef(null);
 
   const handleTakePhoto = () => {
-    setImage(cameraRef.current.takePhoto());
+    const photo = cameraRef.current.takePhoto();
+    setLocalImage(photo);
+    setImage(photo);
     setConfirm(true);
   };
 
-  const handleConfirm = async (setSelfie) => {
-    await fetch("/api/age", {
+  const handleConfirm = async () => {
+    const response = await fetch("/api/age", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ image, timestamp: new Date().toISOString() }),
+      body: JSON.stringify({ data: image }),
     });
+    const data = await response.json();
+    setConcepts(data.concepts);
     setConfirm(false);
-    setImage(null);
+    setLocalImage(null);
     setSelfie(false);
   };
 
   const handleRetake = () => {
     setConfirm(false);
-    setImage(null);
+    setLocalImage(null);
   };
-
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="relative w-full h-full">

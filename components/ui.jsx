@@ -15,6 +15,8 @@ export function UI() {
 
   //state hook for when the user clicks the button to take a selfie
   const [selfie, setSelfie] = useState(false);
+  const [concepts, setConcepts] = useState(null);
+  const [image, setImage] = useState(null);
 
   return (
     <div className="flex flex-col h-screen">
@@ -25,7 +27,7 @@ export function UI() {
           <AvatarFallback>AC</AvatarFallback>
         </Avatar>
       </header>
-      <main className="flex-1 overflow-y-auto p-4 space-y-4">
+      {/*<main className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((m, index) => (
           <div key={index} className="flex items-end space-x-2">
             <Avatar className="w-10 h-10">
@@ -53,14 +55,39 @@ export function UI() {
             <SendIcon className="h-6 w-6" />
           </Button>
         </form>
-      </div>
+      </div>*/}
       <section className="flex flex-col items-center p-4 border-t">
         <h2 className="text-lg font-semibold mb-2">Next Selfie in:</h2>
         <Countdown />
         <Button className="mt-4" onClick={() => setSelfie(true)}>
           Take Selfie Now
         </Button>
-        {selfie && <SelfieUI setSelfie={setSelfie} />}
+        {selfie && (
+          <SelfieUI
+            setSelfie={setSelfie}
+            setConcepts={setConcepts}
+            setImage={setImage}
+          />
+        )}
+      </section>
+      <section className="flex flex-row items-center p-4 border-t">
+        <div className="w-1/2">
+          {image && <img src={image} alt="Selfie" className="rounded-full " />}
+        </div>
+        <div className="w-1/2">
+          {image && (
+            <h2 className="text-lg font-semibold mb-2">Predicted Age:</h2>
+          )}
+          {concepts &&
+            concepts.map((concept, index) => (
+              <div
+                key={index}
+                className="bg-blue-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
+              >
+                {concept.name}: {concept.value}
+              </div>
+            ))}
+        </div>
       </section>
     </div>
   );

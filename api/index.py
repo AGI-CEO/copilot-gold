@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-app = FastAPI()
+app = FastAPI(debug=True)
 
 
 @app.get("/api/python")
@@ -13,6 +13,8 @@ from clarifai_grpc.channel.clarifai_channel import ClarifaiChannel
 from clarifai_grpc.grpc.api import resources_pb2, service_pb2, service_pb2_grpc
 from clarifai_grpc.grpc.api.status import status_code_pb2
 import base64
+from pydantic import BaseModel
+
 
 import os
 
@@ -23,10 +25,14 @@ MODEL_ID = "age-demographics-recognition"
 MODEL_VERSION_ID = "fb9f10339ac14e23b8e960e74984401b"
 
 
-@app.post("/api/age/")
-async def analyze_age(file: UploadFile = File(...)):
-    contents = await file.read()
-    base64_encoded_image = base64.b64encode(contents).decode("utf-8")
+class Image(BaseModel):
+    data: str
+
+
+@app.post("/api/age")
+async def analyze_age(image: Image):
+    base64_encoded_image = image.data.split(",")[1]
+    base64_bytes = base64.b64decode(base64_encoded_image)
 
     channel = ClarifaiChannel.get_grpc_channel()
     stub = service_pb2_grpc.V2Stub(channel)
@@ -42,7 +48,7 @@ async def analyze_age(file: UploadFile = File(...)):
             inputs=[
                 resources_pb2.Input(
                     data=resources_pb2.Data(
-                        image=resources_pb2.Image(base64=base64_encoded_image)
+                        image=resources_pb2.Image(base64=base64_bytes)
                     )
                 )
             ],
@@ -56,7 +62,7 @@ async def analyze_age(file: UploadFile = File(...)):
         )
 
     output = post_model_outputs_response.outputs[0]
-
+    print("Predicted concepts:" + str(output.data.concepts))
     concepts = [
         {"name": concept.name, "value": concept.value}
         for concept in output.data.concepts
