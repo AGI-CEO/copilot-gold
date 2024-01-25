@@ -24,7 +24,7 @@ const nextConfig = {
             : "/api/openapi.json",
       },
     ];
-  }*/,
+  }*/
 };
 
 module.exports = nextConfig;
