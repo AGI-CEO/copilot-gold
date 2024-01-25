@@ -15,13 +15,16 @@ const SelfieUI = ({ setSelfie, setConcepts, setImage }) => {
   };
 
   const handleConfirm = async () => {
-    const response = await fetch("/api/age", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ data: image }),
-    });
+    const response = await fetch(
+      "https://copilot-gold-api.onrender.com/api/age",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ data: image }),
+      }
+    );
     const data = await response.json();
     setConcepts(data.concepts);
     setConfirm(false);

@@ -1,6 +1,16 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(debug=True)
+app = FastAPI(debug=False)  # Set debug to False for production
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace with your frontend domain
+    allow_credentials=True,
+    allow_methods=["POST"],  # Only allow POST requests
+    allow_headers=["*"],  # Allows all headers
+)
 
 
 from clarifai_grpc.channel.clarifai_channel import ClarifaiChannel
