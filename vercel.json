@@ -1,5 +1,5 @@
 {
   "build": {
-    "ignoreBuildFiles": "echo api/**"
+    "ignoreCommand": "git diff --quiet HEAD^ HEAD ./api"
   }
 }
