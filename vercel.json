@@ -1,3 +1,5 @@
 {
-  "ignore": ["api/**"]
+  "build": {
+    "ignoreBuildFiles": "echo api/**"
+  }
 }
